@@ -20,9 +20,26 @@ int g_data[BUF_SIZE];   /* shared finite buffer  */
 int g_idx;              /* index to next available slot in buffer, 
                            remember that globals are set to zero
                            according to C standard, so no init needed  */
+struct threadargs {
+  int id;         /* thread number */
+  int sec;        /* how many seconds to sleep */
+  int signal[6];  /* which threads to signal when done */
+};
+
 
 int main(void) {
 	pthread_t pid, cid;
+    int k = 1;
+
+  struct threadargs *targs[6];
+
+  /* allocate memory for threadargs and zero out semaphore signals */
+  for(int i=0;i<6;i++) { 
+    targs[i] = (struct threadargs*) malloc(sizeof(struct threadargs));
+    for(int j=0;j<6;j++) { targs[i]->signal[j]=0; }
+  }
+
+ targs[0]->id=k +1;
 
 	// Initialie the semaphores
 	sem_init(&empty, SHARED, BUF_SIZE);

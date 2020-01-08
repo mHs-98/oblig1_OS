@@ -3,7 +3,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<unistd.h> 
-#define N        5
+#define N        10
 #define LEFT     ((i+N-1)%N)
 #define RIGHT    ((i+1)%N)
 #define THINKING 0
