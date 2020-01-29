@@ -9,16 +9,6 @@ Denne oppgaven består av følgende laboppgaver fra kompendiet:
 
 SE OPPGAVETEKST I KOMPENDIET. HUSK Å REDIGER TEKSTEN NEDENFOR!
 
-## Gruppemedlemmer
+## Mahamed Hassan Said
 
-**TODO: Erstatt med navn på gruppemedlemmene**
 
-* Ola Eksempel
-* Kari Mal
-
-## Sjekkliste
-
-* Har navnene på gruppemedlemmene blitt skrevet inn over?
-* Har læringsassistenter og foreleser blitt lagt til med leserettigheter?
-* Er issue-tracker aktivert?
-* Er pipeline aktivert, og returnerer pipelinen "Successful"?
