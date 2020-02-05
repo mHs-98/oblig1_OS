@@ -1,3 +1,4 @@
+
 #include <pthread.h>
 #include <semaphore.h>
 #include <stdio.h>
@@ -9,8 +10,8 @@
 #define MAX_MOD 100000
 #define NUM_ITER 200
 
-void* Producer(); /* Producer thread */
-void* Consumer(); /* Consumer thread */
+void* Producer(void* args ); /* Producer thread */
+void* Consumer(void* args); /* Consumer thread */
 
 sem_t empty;            /* empty: How many empty buffer slots */
 sem_t full;             /* full: How many full buffer slots */
@@ -27,19 +28,37 @@ struct threadargs {
 };
 
 
-int main(void) {
-	pthread_t pid, cid;
+int main(int argc, char* argv[]) {
+	
     int k = 1;
+	int i; 
 
-  struct threadargs *targs[6];
+  	int numcount;
+  	if (argc==2)
+  	{
+	 numcount = strtol(argv[1], NULL, 10);
+  	}
+  	else
+  	{
+	  printf("skriv en tall:\n");
+	  return -1;
+ 	 }
+
+  	pthread_t pid[numcount], cid[numcount];
+  	struct threadargs *targs[numcount];
+  
+  
+
+
 
   /* allocate memory for threadargs and zero out semaphore signals */
-  for(int i=0;i<6;i++) { 
-    targs[i] = (struct threadargs*) malloc(sizeof(struct threadargs));
-    for(int j=0;j<6;j++) { targs[i]->signal[j]=0; }
-  }
+  	for(i=0;i<=numcount;i++) { 
+  	  targs[i] = (struct threadargs*) malloc(sizeof(struct threadargs));
+		targs[i]->id= i;  
+	// for(int j=0;j<6;j++) { targs[i]->signal[j]=0; }
+  	}
 
- targs[0]->id=k +1;
+ 	targs[0]->id=k +1;
 
 	// Initialie the semaphores
 	sem_init(&empty, SHARED, BUF_SIZE);
@@ -48,20 +67,27 @@ int main(void) {
 
 	// Create the threads
 	printf("main started\n");
-	pthread_create(&pid, NULL, Producer, NULL);
-	pthread_create(&cid, NULL, Consumer, NULL);
+	/*printf("\nHow many items would you like to produce :  ");
+  scanf("%d",&i);*/
+	for( i=0;i<=numcount;i++)
+  	{
+  	pthread_create(&pid[i],NULL,Producer,(void*) targs[i]);
+  	pthread_create(&cid[i], NULL, Consumer, (void*)targs[i]);
+  	}
+	//pthread_create(&pid, NULL, Producer, (void *) targs[0]);
 
-	// And wait for them to finish.
-	pthread_join(pid, NULL);
-	pthread_join(cid, NULL);
-	printf("main done\n");
+	for( i=0;i<=numcount;i++) {
+ 		 pthread_join(pid[i],NULL);
+		 pthread_join(cid[i],NULL);
+ 	 	}
 
 	return 0;
 }
 
 
-void *Producer() {
+void *Producer(void* args) {
 	int i=0, j;
+	struct threadargs* targs = args;
 
 	while(i < NUM_ITER) {
 		// pretend to generate an item by a random wait
@@ -84,7 +110,8 @@ void *Producer() {
 		g_idx++;
 		
 		// Print buffer status.
-		j=0; printf("(Producer, idx is %d): ",g_idx);
+		j=0; 
+		printf("(Producer %d, idx is %d): ",targs->id, g_idx);//endret til å printe id 
 		while(j < g_idx) { j++; printf("="); } printf("\n");
 		
 		// Leave region with exlusive access
@@ -99,8 +126,11 @@ void *Producer() {
 }
 
 
-void *Consumer() {
+void *Consumer(void* args) {
 	int i=0, j;
+	struct threadargs* targs = args;
+	//int id=targs->id;
+	printf("id:: %d",targs->id);
 
 	while(i < NUM_ITER) {
 		// Wait a random amount of time, simulating consuming of an item.
@@ -123,7 +153,7 @@ void *Consumer() {
 		g_idx--;
 		
 		// Print the current buffer status
-		j=0; printf("(Consumer, idx is %d): ",g_idx);
+		j=0; printf("(Consumer %d, idx is %d): ", targs->id, g_idx);
 		while(j < g_idx) { j++; printf("="); } printf("\n");
 		
 		// Leave region with exclusive access
@@ -137,4 +167,6 @@ void *Consumer() {
 	return 0;
 
 }
+
+
 

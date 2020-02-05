@@ -10,7 +10,9 @@ void process(int number, int time) {
 }
 
 int main() {
+  printf("I livet?\n");
   int p[6];
+
 
   // START P0
   // Fork en ny proc
@@ -38,13 +40,41 @@ int main() {
   waitpid(p[0], NULL, 0);
 
   // START P1
-  // VENT P1
-  // VENT P2
-  // START P3
-  // VENT P4
-  // START P5
-  // VENT P3
-  // VENT P5
+	p[1] = fork();
+	if(p[1] == 0) {
+	 process (1, 2);
+	exit(0);
+}
 
+ 	p[4] = fork();
+        if(p[4] == 0) {
+         process (4,3);
+        exit(0);
+      }
+
+  // VENT P1
+	waitpid(p[1], NULL, 0);
+  // VENT P2
+	waitpid(p[2],NULL, 0);
+  // START P3
+	p[3] = fork();
+	if(p[3] == 0){
+	process(3,2);
+	exit(0);
+}
+
+  // VENT P4
+	waitpid(p[4], NULL, 0);
+  // START P5
+	 p[5] = fork();
+        if(p[5] == 0){
+        process(5,3);
+        exit(0);
+}
+
+  // VENT P3
+	waitpid(p[3], NULL, 0);
+  // VENT P5
+	waitpid(p[5], NULL, 0);
   return 0;
 }

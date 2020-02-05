@@ -36,6 +36,7 @@ int main(void)
 {
   int i,j;
   pthread_t tid[6];
+    
   struct threadargs *targs[6];
 
   /* allocate memory for threadargs and zero out semaphore signals */
@@ -45,15 +46,47 @@ int main(void)
   }
 
   targs[0]->id=1;             /* thread number 1 */
-  targs[0]->sec=1;            /* how long to sleep */
+  targs[0]->sec=1;           /* how long to sleep */
   targs[0]->signal[1]=1;      /* which threads to wake up when done */
   targs[0]->signal[4]=1;
   sem_init(&sem[targs[0]->id-1],SHARED,1); /* start waiting or running? */
   pthread_create(&tid[0], NULL, tfunc, (void *) targs[0]);
 
 // GJENTA KODELINJENE OVER FOR DE FEM NESTE TRÅDENE, BARE ENDRE PARAMETRE
+  targs[1]->id=2;          //tråd num2
+  targs[1]->sec=2;        //sleep to sekunder
+  targs[1]->signal[3]=1;   // vekk tråd nummer 4
+  sem_init(&sem[targs[1]->id -1], SHARED,0);
+  pthread_create(&tid[1], NULL, tfunc, (void *) targs[1]);
 
-  for(i=0;i<1;i++) {
+
+  targs[2]->id=3;          //tråd num3, 
+  targs[2]->sec=3;         //sleep tre sekunder
+  targs[2]->signal[3]=1; // vekk tråd nummer 4
+  sem_init(&sem[targs[2]->id -1], SHARED,1);
+  pthread_create(&tid[2], NULL, tfunc, (void *) targs[2]);
+ 
+
+/*Tråd nummer 4/targ[3] vekker ingen annet tråd ([^-^])*/
+  targs[3]->id=4;          //tråd num4, 
+  targs[3]->sec=2;        //sleep to sekunder
+  sem_init(&sem[targs[3]->id -1], SHARED,0);
+  pthread_create(&tid[3], NULL, tfunc, (void *) targs[3]);
+
+  targs[4]->id=5;          //tråd num5, 
+  targs[4]->sec=3;        //sleep tre sekunder
+  targs[4]->signal[5]=1;
+  sem_init(&sem[targs[4]->id -1], SHARED,0);
+  pthread_create(&tid[4], NULL, tfunc, (void *) targs[4]);
+
+
+  targs[5]->id=6;                                 //tråd num6, 
+  targs[5]->sec=3;        //sleep tre sekunder
+  sem_init(&sem[targs[5]->id -1], SHARED,0);
+  pthread_create(&tid[5], NULL, tfunc, (void *) targs[5]);
+       
+
+  for(i=0;i<6;i++) {
     pthread_join(tid[i], NULL);
   }
 
