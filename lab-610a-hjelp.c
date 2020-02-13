@@ -80,12 +80,7 @@ void take_forks(int i) {
     test(i);
     sem_post(&b);
     sem_wait(&phil_s[i]);
-    sleep(1);
- // state[i]=HUNGRY;
- // test(i);
-  //down
-  
-  //up
+    usleep(random()%TIME); 
 }
 
 void put_forks(int i) {
@@ -96,9 +91,6 @@ void put_forks(int i) {
     test(LEFT);
     test(RIGHT);
     sem_post(&b);
-  /*state[i]=THINKING;
-  test(LEFT);
-  test(RIGHT);*/
 }
 
 void test(int i) {
