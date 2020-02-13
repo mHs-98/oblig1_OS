@@ -82,7 +82,7 @@ int main(int argc, char* argv[]) {
 
 
 void *Producer(void* args) {
-	int i=0, j;
+	int i=0,j;
 	struct threadargs* targs = args;
 
 	while(i < NUM_ITER) {
