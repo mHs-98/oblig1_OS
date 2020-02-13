@@ -6,8 +6,8 @@
 #include<pthread.h>
 #include<semaphore.h>
 #include<stdio.h>
-#include<stdlib.h>
 #include<unistd.h> 
+#include<stdlib.h>
 #define N        5
 #define LEFT     ((i+N-1)%N)
 #define RIGHT    ((i+1)%N)
@@ -84,7 +84,7 @@ void take_forks(int i) {
 }
 
 void put_forks(int i) {
-    sem_wait(&b);
+    sem_wait(&b); /* vente */
     state[i] = THINKING;
     printf("Filosof %d legger gaflen %d og %d ned\n",i+1,LEFT+1,i+1);
     printf("Filosof %d tenker\n",i+1);
@@ -96,7 +96,7 @@ void put_forks(int i) {
 void test(int i) {
   if(state[i]==HUNGRY && state[LEFT]!=EATING && state[RIGHT]!=EATING) {
     state[i]=EATING; 
-        usleep(random()%TIME); 
+        usleep(random()%TIME);  /* think 2 times longer than eating */
         printf("Filosof %d har gaffelnr: %d og %d\n",i+1,LEFT+1,i+1);
         printf("Filosof %d spiser\n",i+1);
         sem_post(&phil_s[i]);
