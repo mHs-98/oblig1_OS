@@ -1,9 +1,14 @@
+/* 
+  *Hva mer må gjøres?
+    *mangler sykronisering
+*/
+
 #include<pthread.h>
 #include<semaphore.h>
 #include<stdio.h>
 #include<stdlib.h>
 #include<unistd.h> 
-#define N        10
+#define N        5
 #define LEFT     ((i+N-1)%N)
 #define RIGHT    ((i+1)%N)
 #define THINKING 0
@@ -21,6 +26,8 @@ void test(int i);
 sem_t phil_s[N];        /* phil: one semaphore for each philosopher */
 sem_t b,mutexprint;     /* b: binary, used as a mutex */
 int state[N];           /* keep track of everyone's state */
+int forks[N];           //antall gafler
+
 
 char *text[] = {"THINK ", "HUNGRY ", "EAT "};
 
@@ -53,9 +60,9 @@ void *phil(void *arg) {
   while(i < NUM_ITER) {
     usleep(random()%(TIME*2)); /* think 2 times longer than eating */
     take_forks((intptr_t)arg);
-    printf("Filosof %ld spiser:\t",(intptr_t)arg);
+    printf("Filosof %ld spiser:\t\n",(intptr_t)arg);
     for(j=0;j<N;j++) {
-      printf("%s\t",text[state[j]]);
+     // printf("%s\t",text[state[j]]);
     }
     printf("\n");
     usleep(random()%TIME);      /* eat */
@@ -66,18 +73,40 @@ void *phil(void *arg) {
 }
 
 void take_forks(int i) {
-  state[i]=HUNGRY;
-  test(i);
+
+    sem_wait(&b);
+    state[i] = HUNGRY;
+    printf("Filosof %d er sulten\n",i+1);
+    test(i);
+    sem_post(&b);
+    sem_wait(&phil_s[i]);
+    sleep(1);
+ // state[i]=HUNGRY;
+ // test(i);
+  //down
+  
+  //up
 }
 
 void put_forks(int i) {
-  state[i]=THINKING;
+    sem_wait(&b);
+    state[i] = THINKING;
+    printf("Filosof %d legger gaflen %d og %d ned\n",i+1,LEFT+1,i+1);
+    printf("Filosof %d tenker\n",i+1);
+    test(LEFT);
+    test(RIGHT);
+    sem_post(&b);
+  /*state[i]=THINKING;
   test(LEFT);
-  test(RIGHT);
+  test(RIGHT);*/
 }
 
 void test(int i) {
   if(state[i]==HUNGRY && state[LEFT]!=EATING && state[RIGHT]!=EATING) {
     state[i]=EATING; 
+        usleep(random()%TIME); 
+        printf("Filosof %d har gaffelnr: %d og %d\n",i+1,LEFT+1,i+1);
+        printf("Filosof %d spiser\n",i+1);
+        sem_post(&phil_s[i]);
   }
 }

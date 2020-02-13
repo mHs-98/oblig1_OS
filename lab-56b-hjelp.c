@@ -47,10 +47,6 @@ int main(int argc, char* argv[]) {
   	pthread_t pid[numcount], cid[numcount];
   	struct threadargs *targs[numcount];
   
-  
-
-
-
   /* allocate memory for threadargs and zero out semaphore signals */
   	for(i=0;i<=numcount;i++) { 
   	  targs[i] = (struct threadargs*) malloc(sizeof(struct threadargs));
