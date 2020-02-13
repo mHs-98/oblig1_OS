@@ -5,9 +5,10 @@
 
 #include<pthread.h>
 #include<semaphore.h>
+#include<stdlib.h>
 #include<stdio.h>
 #include<unistd.h> 
-#include<stdlib.h>
+
 #define N        5
 #define LEFT     ((i+N-1)%N)
 #define RIGHT    ((i+1)%N)
